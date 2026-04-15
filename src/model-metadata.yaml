@@ -1,0 +1,15 @@
+name: event-scount
+type: inference
+targetType: textgeneration
+inferenceModel:
+  targetName: resultText
+runtimeParameterDefinitions:
+  - fieldName: MODEL
+    type: string 
+    defaultValue: Qwen/Qwen3.5-122B-A10B-GPTQ-Int4
+  - fieldName: API_BASE_URL
+    type: string 
+    defaultValue: https://app.datarobot.com/api/v2/genai/llmgw
+  - fieldName: API_TOKEN
+    type: credential
+    credentialType: api_token
