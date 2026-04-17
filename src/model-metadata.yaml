@@ -13,3 +13,6 @@ runtimeParameterDefinitions:
   - fieldName: API_TOKEN
     type: credential
     credentialType: api_token
+  - fieldName: SSL_VERIFY
+    type: boolean
+    defaultValue: false

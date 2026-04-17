@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import os
 from typing import Any, Dict
+import httpx
 
 from openai import OpenAI
 
@@ -25,11 +26,13 @@ from datarobot_drum import RuntimeParameters
 API_TOKEN=RuntimeParameters.get("API_TOKEN")["apiToken"]
 LLM = RuntimeParameters.get("MODEL")
 BASE_URL = RuntimeParameters.get("API_BASE_URL")
+SSL_VERIFY = RuntimeParameters.get("SSL_VERIFY")
 
 # DRUM may add this key to the request body for moderations / MLOps association.
 _DR_INTERNAL_KEYS = frozenset({"datarobot_association_id"})
 
 _client: OpenAI | None = None
+
 
 
 def _env_first(*keys: str) -> str | None:
@@ -39,12 +42,16 @@ def _env_first(*keys: str) -> str | None:
             return value
     return None
 
-
 def _get_openai_client() -> OpenAI:
     global _client
     if _client is not None:
         return _client
-    _client = OpenAI(base_url=BASE_URL.rstrip("/"), api_key=API_TOKEN)
+    if not SSL_VERIFY:
+        print("SSL_VERIFY is false")
+        custom_http_client = httpx.Client(verify=False)
+        _client = OpenAI(base_url=BASE_URL.rstrip("/"), api_key=API_TOKEN, http_client=custom_http_client)
+    else:
+        _client = OpenAI(base_url=BASE_URL.rstrip("/"), api_key=API_TOKEN)
     return _client
 
 
